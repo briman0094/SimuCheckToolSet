@@ -19,7 +19,7 @@ ACTUALACTIVE := {} ; holds the state of the buttons that is clicked currently
 WELCOME := "NO"
 
 global KeyboardActive = FALSE
-global logFile := "assets/SimuCheck.log"
+global logFile := "SimuCheck.log"
 global logLife := 30000 ; how long the log will live for in milliseconds
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; cleaned up code ;;;;;;;;;;
@@ -265,7 +265,7 @@ AxisPushHoldKeyTopOrBottom(JOY, AXIS, TOP_DN, TOP_UP, BOTTOM_DN, BOTTOM_UP) {
     } 
 }
 
-AxisToKeysNotches(JOY, AXIS, NOTCHES, KEYS_INCREASE, KEYS_DECREASE) {
+AxisToKeysNotches(JOY, AXIS, NOTCHES, KEYS_INCREASE, KEYS_DECREASE, MIDDLE_NOTCH_INCREASE = "", MIDDLE_NOTCH_DECREASE = "") {
 
 	global ACTUAL
 	act := ACTUAL[INDEX]
@@ -318,7 +318,12 @@ AxisToKeysNotches(JOY, AXIS, NOTCHES, KEYS_INCREASE, KEYS_DECREASE) {
 			; MsgBox, Increase
 			Loop { ; increase throttle
 				
-				parts := splitKeystrokes(KEYS_INCREASE)
+				if (MIDDLE_NOTCH_INCREASE != "" && (ACTUAL[INDEX] = Floor(NOTCHES / 2) - 1 || ACTUAL[INDEX] = Ceil(NOTCHES / 2) - 1)) {
+					parts := splitKeystrokes(MIDDLE_NOTCH_INCREASE)
+				} else {
+					parts := splitKeystrokes(KEYS_INCREASE)
+				}
+				
 				for key, value in parts {
 					keys := splitKey(value)
 					if (keys.key == "Sleep") {
@@ -358,7 +363,12 @@ AxisToKeysNotches(JOY, AXIS, NOTCHES, KEYS_INCREASE, KEYS_DECREASE) {
 			; MsgBox, Decrease
 			Loop { ; increase throttle
 
-				parts := splitKeystrokes(KEYS_DECREASE)
+				if (MIDDLE_NOTCH_DECREASE != "" && (ACTUAL[INDEX] = Floor(NOTCHES / 2) || ACTUAL[INDEX] = Ceil(NOTCHES / 2))) {
+					parts := splitKeystrokes(MIDDLE_NOTCH_DECREASE)
+				} else {
+					parts := splitKeystrokes(KEYS_DECREASE)
+				}
+				
 				for key, value in parts {
 					keys := splitKey(value)
 					if (keys.key == "Sleep") {
@@ -447,7 +457,7 @@ assertsTrue(check, against) {
 }
 
 writeToLog(message, newLine) {
-    Sleep, 10
+    Sleep, 10aaaaaa
 	if (newLine = 1) {
         FileAppend,`n%message%,%logFile%
     } else {
